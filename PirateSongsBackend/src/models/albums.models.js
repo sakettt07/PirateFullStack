@@ -8,6 +8,10 @@ const albumSchema= new Schema({
         type:String,
         required:true
     },
+    bgColor:{
+        type:String,
+        required:true
+    },
     song:{
         type:String,
         required:true
@@ -16,14 +20,6 @@ const albumSchema= new Schema({
         type:String,
         required:true
     },
-    file:{
-        type:String,
-        required:true
-    },
-    duration:{
-        type:String,
-        required:true
-    }
 })
 
 export const Album = mongoose.model("Album", albumSchema)
