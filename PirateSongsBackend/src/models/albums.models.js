@@ -12,10 +12,10 @@ const albumSchema= new Schema({
         type:String,
         required:true
     },
-    song:{
-        type:String,
-        required:true
-    },
+    // song:{
+    //     type:String,
+    //     required:true
+    // },
     image:{
         type:String,
         required:true
