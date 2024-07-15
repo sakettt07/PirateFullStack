@@ -1,20 +1,22 @@
-import {v2 as cloudinary} from "cloudinary";
-import {Song} from "../models/songs.model.js";
-const addSong=async(req,res)=>{
+import { v2 as cloudinary } from "cloudinary";
+import { Song } from "../models/songs.model.js";
+
+const addSong = async (req, res) => {
     try {
         const { name, desc, album } = req.body;
         const audioFile = req.files.audio ? req.files.audio[0] : null;
         const imageFile = req.files.image ? req.files.image[0] : null;
 
         if (!audioFile || !imageFile) {
-            return res.status(400).send("Audio and image files are required");
+            return res.status(400).json({ success: false, message: "Audio and image files are required" });
         }
 
         // Upload to Cloudinary
         const audioUpload = await cloudinary.uploader.upload(audioFile.path, { resource_type: "video" });
         const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
-        const duration=`${Math.floor(audioUpload.duration/60)}:${Math.floor(audioUpload.duration%60)}`
-        // uploaded to database.
+        const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`;
+
+        // Upload to database.
         await Song.create({
             name,
             desc,
@@ -24,23 +26,23 @@ const addSong=async(req,res)=>{
             duration
         });
 
-        res.status(200).send("Song added successfully");
+        res.status(200).json({ success: true, message: "Song added successfully" });
     } catch (error) {
-        console.error(error);
-        res.status(500).send("An error occurred while adding the song");
+        console.error("Error adding song:", error);
+        res.status(500).json({ success: false, message: "An error occurred while adding the song" });
     }
+};
 
-}
-const listSong=async(req,res)=>{
+const listSong = async (req, res) => {
     try {
-        const songs=await Song.find();
+        const songs = await Song.find();
         res.status(200).json(songs);
     } catch (error) {
-        console.error(error);
-        res.status(400).send("error while fetching all the songs")
+        console.error("Error fetching songs:", error);
+        res.status(400).json({ success: false, message: "Error while fetching all the songs" });
     }
+};
 
-}
 const removeSong = async (req, res) => {
     try {
         const { id } = req.body; // Using req.body to get the id from the request body
@@ -58,5 +60,6 @@ const removeSong = async (req, res) => {
         console.error("Error occurred:", error);
         res.status(500).json({ success: false, message: "An error occurred while removing the song" });
     }
-}
-export{addSong,listSong,removeSong};
+};
+
+export { addSong, listSong, removeSong };
