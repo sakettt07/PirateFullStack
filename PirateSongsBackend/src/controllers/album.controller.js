@@ -1,45 +1,49 @@
-import {v2 as cloudinary} from "cloudinary";
-import {Album} from "../models/albums.models.js";
+import { v2 as cloudinary } from "cloudinary";
+import { Album } from "../models/albums.models.js";
 
-const addAlbum=async(req,res)=>{
+const addAlbum = async (req, res) => {
     try {
-        const {name,bgColor,desc}=req.body;
-        const imageFile=req.file;
-        
-        if(!imageFile){
-            return res.status(400).send("Image is required");
-        }
-            const imageUpload=await cloudinary.uploader.upload(imageFile.path,{resource_type:"image"});
-            await Album.create({
-                name,bgColor,desc,image:imageUpload.secure_url
-            });
-            return res.status(200).send("new Album has been added");
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("An error occurred while adding the album");
-    }
+        const { name, bgColor, desc } = req.body;
+        const imageFile = req.file;
 
-}
-const listAlbum=async(req,res)=>{
-    try {
-        const allAlbums=await Album.find({});
-        if(!allAlbums){
-            return res.status(400).send("Error while fetching the list of albums");
+        if (!imageFile) {
+            return res.status(400).json({ success: false, message: "Image is required" });
         }
-        return res.status(200).json({success:true,albums:allAlbums});
+
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
+        await Album.create({
+            name, bgColor, desc, image: imageUpload.secure_url
+        });
+
+        return res.status(200).json({ success: true, message: "New album has been added" });
     } catch (error) {
         console.error(error);
-        res.status(500).send("An error occurred while fetching the album");
+        res.status(500).json({ success: false, message: "An error occurred while adding the album" });
     }
-}
-const deleteAlbum=async(req,res)=>{
+};
+
+const listAlbum = async (req, res) => {
     try {
-        const {id}=req.body;
-        await Album.findOneAndDelete(id)
-        res.json({success:true,message:"Album deleted"});
+        const allAlbums = await Album.find({});
+        if (!allAlbums) {
+            return res.status(400).json({ success: false, message: "Error while fetching the list of albums" });
+        }
+        return res.status(200).json({ success: true, albums: allAlbums });
     } catch (error) {
         console.error(error);
-        res.status(500).send("An error occurred while deleting the album");
+        res.status(500).json({ success: false, message: "An error occurred while fetching the albums" });
     }
-}
-export {addAlbum,listAlbum,deleteAlbum};
+};
+
+const deleteAlbum = async (req, res) => {
+    try {
+        const { id } = req.body;
+        await Album.findOneAndDelete({ _id: id });
+        res.json({ success: true, message: "Album deleted" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "An error occurred while deleting the album" });
+    }
+};
+
+export { addAlbum, listAlbum, deleteAlbum };

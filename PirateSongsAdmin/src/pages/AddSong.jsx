@@ -13,20 +13,6 @@ const AddSong = () => {
   const [image, setImage] = useState(null);
   const [album, setAlbum] = useState("none");
 
-  // useEffect(() => {
-  //   // Fetch album data if needed
-  //   const fetchAlbums = async () => {
-  //     try {
-  //       const response = await axios.get(`${url}/api/albums`);
-  //       setAlbumData(response.data.albums);
-  //     } catch (error) {
-  //       console.error("Error fetching albums:", error);
-  //     }
-  //   };
-
-  //   fetchAlbums();
-  // }, []);
-
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,6 +44,25 @@ const AddSong = () => {
 
     setLoading(false);
   };
+
+  const loadAlbumData=async()=>{
+    try {
+      const response=await axios.get(`${url}/api/album/listalbums`);
+      if(response.data.success){
+        setAlbumData(response.data.albums)
+        // console.log(response.data.albums)
+      }
+      else{
+        toast.error("Unable to load albums data")
+      }
+    } catch (error) {
+      toast.error("Error Occur")
+      
+    }
+  }
+  useEffect(()=>{
+    loadAlbumData();
+  },[])
 
   return loading ? (
     <div className="grid place-items-center min-h-[80vh]">
@@ -134,9 +139,9 @@ const AddSong = () => {
           className="bg-transparent outline-green-700 w-[150px] border-2 p-2.5"
         >
           <option value="none">None</option>
-          {albumData.map((album) => (
-            <option key={album.id} value={album.id}>
-              {album.name}
+          {albumData.map((item,index) => (
+            <option key={index} value={item.name}>
+              {item.name}
             </option>
           ))}
         </select>
