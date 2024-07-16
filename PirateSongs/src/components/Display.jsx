@@ -8,11 +8,13 @@ import AllSongs from './AllSongs'
 import AllPodcasts from './AllPodcasts'
 
 const Display = () => {
+
+  const {albumData}=useContext(PlayerContext);
   const displayRef=useRef();
   const location=useLocation();
   const isAlbum=location.pathname.includes("album");
-  const albumId=isAlbum ? location.pathname.slice(-1): "";
-  const bgColor=albumsData[Number(albumId)].bgColor;
+  const albumId=isAlbum ? location.pathname.split('/').pop():""
+  const bgColor=isAlbum && albumData.length>0 ? albumData.find((x)=>(x._id===albumId)).bgColour:"#121212"
 
   const {theme}=useContext(PlayerContext);
 
@@ -28,12 +30,15 @@ const Display = () => {
   },[isAlbum, bgColor, theme])
   return (
     <div ref={displayRef} className='w-full m-2 px-6 pt-4 rounded bg-[#121212] text-white overflow-auto lg:ml-0'>
-        <Routes>
-            <Route path='/' element={<DisplayHome />} />
-            <Route path='/songs' element={<AllSongs />} />
-            <Route path='/podcasts' element={<AllPodcasts />} />
-            <Route path='/album/:id' element={<DisplayAlbum />} />
-        </Routes>
+        {
+          albumData.length >0 ?<Routes>
+          <Route path='/' element={<DisplayHome />} />
+          <Route path='/songs' element={<AllSongs />} />
+          <Route path='/podcasts' element={<AllPodcasts />} />
+          <Route path='/album/:id' element={<DisplayAlbum album={albumData.find((x)=>(x._id===albumId))} />} />
+      </Routes>
+      :null
+        }
       
     </div>
   )
