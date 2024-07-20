@@ -9,7 +9,7 @@ import ListSong from "./pages/ListSong";
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 
-export const url='http://localhost:3000'
+export const url='https://piratesongsbackend.onrender.com'
 const App = () => {
   return (
     <div className='flex items-start min-h-screen'>
