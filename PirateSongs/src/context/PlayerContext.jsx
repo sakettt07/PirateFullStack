@@ -9,7 +9,7 @@ const PlayerContextProvider = ({ children }) => {
     const seekBg = useRef();
     const seekBar = useRef();
 
-const url='http://localhost:3000'
+const url='https://piratesongsbackend.onrender.com'
     
     // all states
     const[songsData,setSongsData]=useState([])
